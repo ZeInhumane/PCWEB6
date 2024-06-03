@@ -72,8 +72,7 @@ export default function PostPageAdd() {
                             onChange={(e) => {
                                 const imageFile = e.target.files[0];
                                 const previewImage = URL.createObjectURL(imageFile);
-                                const selectedImage = URL.createObjectURL(e.target.files[0]);
-                                setImage(selectedImage);
+                                setImage(imageFile);
                                 setPreviewImage(previewImage);
                                 setImageName(imageFile.name);
                             }}
