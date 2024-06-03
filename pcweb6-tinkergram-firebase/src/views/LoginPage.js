@@ -1,14 +1,25 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    const handleGoogleLogin = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            await signInWithPopup(auth, provider);
+            navigate("/");
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
     return (
         <Container>
             <h1 className="my-3">Login to your account</h1>
@@ -37,6 +48,7 @@ export default function LoginPage() {
                     <a href="/signup">Sign up for an account</a>
                 </Form.Group>
                 <Button variant="primary" onClick={async (e) => {
+                    e.preventDefault();
                     setError("");
                     const canLogin = username && password;
                     if (canLogin) {
@@ -44,14 +56,17 @@ export default function LoginPage() {
                             await signInWithEmailAndPassword(auth, username, password);
                             navigate("/");
                         } catch (error) {
-                            setError(error.message)
+                            setError(error.message);
                         }
                     }
                 }}>
                     Login
                 </Button>
+                <Button variant="danger" className="ms-2" onClick={handleGoogleLogin}>
+                    Login with Google
+                </Button>
             </Form>
-            <p>{error}</p>
+            {error && <p className="text-danger">{error}</p>}
         </Container>
     );
 }
